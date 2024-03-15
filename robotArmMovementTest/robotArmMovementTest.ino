@@ -37,18 +37,18 @@ int trans2(float value) {
   // Serial.println(degree(90));
 }
 
-float theta1(int x, int y) {
-  int L1 = 162;
-  int L2 = 132;
+float theta1(float x, float y) {
+  float L1 = 162;
+  float L2 = 132;
   // float alpha = acos((square(L1) + square(x) + square(y) - square(L2))/(2 * L1 * sqrt(square(x) + square(y))));
   float alpha = acos((square(x) + square(y) + square(L1) - square(L2)) / (2 * L1 * sqrt(square(x) + square(y))));
   float theta3 = atan(y/x) + alpha;
   return degrees(theta3);
 }   
 
-float theta2(int x, int y) {
-  int L1 = 162;
-  int L2 = 132;
+float theta2(float x, float y) {
+  float L1 = 162;
+  float L2 = 132;
   // float beta = acos((square(L1) + square(L2) -square(x) -square(y))/(2 * L1 * L2));
   float beta = acos((square(L1) + square(L2) -square(x) -square(y))/(2 * L1 * L2));
   float theta4 = PI - beta;
@@ -79,11 +79,11 @@ void setup() {
 
   delay(2);
 
-  stepper1.setMaxSpeed(500);
+  stepper1.setMaxSpeed(1000);
   stepper1.setAcceleration(1500);
-  stepper2.setMaxSpeed(500);
+  stepper2.setMaxSpeed(1000);
   stepper2.setAcceleration(1500);
-  stepper3.setMaxSpeed(500);
+  stepper3.setMaxSpeed(1000);
   stepper3.setAcceleration(1500);
 
   steppers.addStepper(stepper1);
@@ -185,45 +185,66 @@ void setup() {
 /////////////////////////////////////////////
 
 void loop() {
-  delay(1000);
+  // delay(1000);
   long degrees[2]; // Array of desired stepper positions
 
-  // degrees[0] = trans1(-90);
-  // degrees[1] = trans1(-90);
-  // // positions[2] = trans2(-20);
-  // steppers.moveTo(degrees);
-  // steppers.runSpeedToPosition();// Blocks until all are in position
-  // delay(1000);
-  
-  // Move to a different coordinate
-  degrees[0] = trans1(-20);
-  degrees[1] = trans1(-30);
-  // positions[2] = trans2(0);
-  steppers.moveTo(degrees);
-  steppers.runSpeedToPosition(); // Blocks until all are in position
-  delay(1000);
-
-  degrees[0] = trans1(-60);
-  degrees[1] = trans1(-140);
-  // positions[2] = trans2(0);
-  steppers.moveTo(degrees);
-  steppers.runSpeedToPosition(); // Blocks until all are in position
-  delay(1000);
-
-  // degrees[0] = trans1(-theta1(100, 0));
-  // degrees[1] = trans1(-theta1(100, 0));
+  // degrees[0] = trans1(-theta1(100, 100));
+  // degrees[1] = trans1(-theta2(100, 100));
+  // Serial.println("////////////////////");
+  // Serial.println(-theta1(294, 0));
+  // Serial.println(-theta2(294, 0));
+  // Serial.println("////////////////////");
   // // positions[2] = trans2(0);
   // steppers.moveTo(degrees);
   // steppers.runSpeedToPosition(); // Blocks until all are in position
   // delay(1000);
 
-  // degrees[0] = trans1(-theta1(200, 0));
-  // degrees[1] = trans1(-theta1(200, 0));
+  // degrees[0] = trans1(-theta1(200, 200));
+  // degrees[1] = trans1(-theta2(200, 200));
+  // Serial.println("////////////////////");
+  // Serial.println(-theta1(100, 0));
+  // Serial.println(-theta2(100, 0));
+  // Serial.println("////////////////////");
   // // positions[2] = trans2(0);
   // steppers.moveTo(degrees);
   // steppers.runSpeedToPosition(); // Blocks until all are in position
   // delay(1000);
 
+  for (int i = 0; i<=100; i++) {
+    degrees[0] = trans1(-theta1(100, i));
+    degrees[1] = trans1(-theta2(100, i));
+    // positions[2] = trans2(0);
+    steppers.moveTo(degrees);
+    steppers.runSpeedToPosition(); // Blocks until all are in position
+    // delay(1);
+  }
+
+  for (int i = 100; i>=0; i--) {
+    degrees[0] = trans1(-theta1(100, i));
+    degrees[1] = trans1(-theta2(100, i));
+    // positions[2] = trans2(0);
+    steppers.moveTo(degrees);
+    steppers.runSpeedToPosition(); // Blocks until all are in position
+    // delay(1);
+  }
+
+  for (int i = 0; i<=100; i++) {
+    degrees[0] = trans1(-theta1(100 + i, i));
+    degrees[1] = trans1(-theta2(100 + i, i));
+    // positions[2] = trans2(0);
+    steppers.moveTo(degrees);
+    steppers.runSpeedToPosition(); // Blocks until all are in position
+    // delay(1);
+  }
+
+  for (int i = 100; i>=0; i--) {
+    degrees[0] = trans1(-theta1(100 + i, i));
+    degrees[1] = trans1(-theta2(100 + i, i));
+    // positions[2] = trans2(0);
+    steppers.moveTo(degrees);
+    steppers.runSpeedToPosition(); // Blocks until all are in position
+    // delay(1);
+  }
   
     // if(Serial.available()) {
     //   char c1 = Serial.read();
