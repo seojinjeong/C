@@ -167,6 +167,11 @@ void setup() {
   stepper2.setCurrentPosition(trans1(-160));
   // stepper3.setCurrentPosition(trans2(+90));
 
+  long degrees[2];
+  degrees[0] = trans1(theta1(132, 162));
+  degrees[1] = trans1(theta2(132, 162));
+  steppers.moveTo(degrees);
+  steppers.runSpeedToPosition();
 }
 
 
@@ -183,38 +188,28 @@ void setup() {
 /////////////////////////////////////////////
 
 void loop() {
-  // delay(1000);
-  long degrees[2]; // Array of desired stepper positions
+  if (Serial.available()) {
+    char c = Serial.read();
+    if (c == 'a') {
+      Serial.println("Hello");
+      long degrees[2]; 
+      for (int i = 20; i<=150; i++) {
+        degrees[0] = trans1(theta1(150, i));
+        degrees[1] = trans1(theta2(150, i));
+        // positions[2] = trans2(0);
+        steppers.moveTo(degrees);
+        steppers.runSpeedToPosition(); // Blocks until all are in position
+        // delay(1);
+      }
 
-  // degrees[0] = trans1(-theta1(100, 100));
-  // degrees[1] = trans1(-theta2(100, 100));
-  // Serial.println("////////////////////");
-  // Serial.println(-theta1(294, 0));
-  // Serial.println(-theta2(294, 0));
-  // Serial.println("////////////////////");
-  // // positions[2] = trans2(0);
-  // steppers.moveTo(degrees);
-  // steppers.runSpeedToPosition(); // Blocks until all are in position
-  // delay(1000);
-
-
-  for (int i = 75; i <= 225; i++) {
-    degrees[0] = trans1(theta1(i, sqrt(square(75)-square(i-150)) + 150));
-    degrees[1] = trans1(theta2(i, sqrt(square(75)-square(i-150)) + 150));
-    // positions[2] = trans2(0);
-    steppers.moveTo(degrees);
-    steppers.runSpeedToPosition(); // Blocks until all are in position
-    // delay(1);
+      for (int i = 150; i>=20; i--) {
+        degrees[0] = trans1(theta1(150, i));
+        degrees[1] = trans1(theta2(150, i));
+        // positions[2] = trans2(0);
+        steppers.moveTo(degrees);
+        steppers.runSpeedToPosition(); // Blocks until all are in position
+        // delay(1);
+      }
+    }
   }
-
-  for (int i = 225; i >= 75; i--) {
-    degrees[0] = trans1(theta1(i, -sqrt(square(75)-square(i-150)) + 150));
-    degrees[1] = trans1(theta2(i, -sqrt(square(75)-square(i-150)) + 150));
-    // positions[2] = trans2(0);
-    steppers.moveTo(degrees);
-    steppers.runSpeedToPosition(); // Blocks until all are in position
-    // delay(1);
-  }
-
-
 }
