@@ -28,7 +28,6 @@ const int num_users = 2; // 유저 수
 bool loggedIn = false;
 int currentUserIndex = -1; // 현재 로그인한 사용자 인덱스
 
-// 초음파 센서 핀 설정
 int servoPin = 14;
 
 int score = 0;
@@ -217,28 +216,5 @@ void loop() {
       Serial.println("Reconnecting...");
     }
     Serial.println("Reconnected to WiFi");
-  }
-
-  // 포인트 계산 로직
-  if (loggedIn) {
-    long currentWeight = -scale.get_units();
-    long weightChange = currentWeight - baseweight;
-
-    baseweight = currentWeight;
-
-    delay(2000);
-
-    if (weightChange > 1) {
-      score = weightChange * 0.32;
-      Serial.print("Added points: ");
-      Serial.println(score);
-      points[currentUserIndex] += score;
-      score = 0;
-    }
-
-    Serial.print("Points: ");
-    Serial.println(points[currentUserIndex]);
-    Serial.print("Current weight: ");
-    Serial.println(currentWeight);
   }
 }
