@@ -5,13 +5,16 @@
 const int step1 = 2;
 const int step2 = 3;
 const int step3 = 4;
+const int step4 = 12;
 const int dir1 = 5;
 const int dir2 = 6;
 const int dir3 = 7;
+const int dir4 = 13;
 
 AccelStepper stepper1 = AccelStepper(1, step1, dir1);
 AccelStepper stepper2 = AccelStepper(1, step2, dir2);
 AccelStepper stepper3 = AccelStepper(1, step3, dir3);
+AccelStepper stepper4 = AccelStepper(1, step4, dir4);
 
 int speed = 0;
 int position1 = 0;
@@ -44,7 +47,7 @@ float theta1(float x, float y) {
   float alpha = acos((square(x) + square(y) + square(L1) - square(L2)) / (2 * L1 * sqrt(square(x) + square(y))));
   float theta3 = atan(y/x) + alpha;
   return -degrees(theta3);
-}   
+}
 
 float theta2(float x, float y) {
   float L1 = 162;

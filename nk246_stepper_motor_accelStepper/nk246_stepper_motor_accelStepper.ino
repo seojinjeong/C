@@ -2,14 +2,14 @@
 #include <Servo.h>
 
 const int step1 = 2;
-const int step2 = 12;
+const int step2 = 3;
 const int step3 = 4;
-const int step4 = 3;
+const int step4 = 12;
 
 const int dir1 = 5;
-const int dir2 = 13;
+const int dir2 = 6;
 const int dir3 = 7;
-const int dir4 = 6;
+const int dir4 = 13;
 
 AccelStepper stepper1 = AccelStepper(1, step1, dir1);
 AccelStepper stepper2 = AccelStepper(1, step2, dir2);
@@ -37,24 +37,6 @@ void setup() {
   // servo1.attach(2);
 
   stepper1.setMaxSpeed(1000);
-  stepper1.moveTo(0);
-  stepper1.setAcceleration(500);
-  stepper1.setCurrentPosition(0);
-
-  stepper2.setMaxSpeed(1000);
-  stepper2.moveTo(0);
-  stepper2.setAcceleration(500);
-  stepper2.setCurrentPosition(0);
-
-  stepper3.setMaxSpeed(1000);
-  stepper3.moveTo(0);
-  stepper3.setAcceleration(500);
-  stepper3.setCurrentPosition(0);
-
-  stepper4.setMaxSpeed(1000);
-  stepper4.moveTo(0);
-  stepper4.setAcceleration(500);
-  stepper4.setCurrentPosition(0);
 }
 
 void loop() {
@@ -86,66 +68,20 @@ void loop() {
 
     if(c == 'q') {
       Serial.println("'q'key is pressed");
-      stepper1.setSpeed(500);
+      stepper1.setSpeed(-500);
     }
 
     else if(c == 'a') {
       Serial.println("'a'key is pressed");
-      stepper1.setSpeed(-500);
-    }
-
-    else if(c == 'w') {
-      Serial.println("'w'key is pressed");
-      stepper2.setSpeed(-1500);
-    }
-
-    else if(c == 's') {
-      Serial.println("'s'key is pressed");
-      stepper2.setSpeed(1500);
-    }
-
-    else if(c == 'e') {
-      Serial.println("'e'key is pressed");
-      stepper3.setSpeed(-500);
-    }
-
-    else if(c == 'd') {
-      Serial.println("'d'key is pressed");
-      stepper3.setSpeed(500);
-    }
-
-    else if(c == 'r') {
-      Serial.println("'r'key is pressed");
-      stepper4.setSpeed(500);
-    }
-
-    else if(c == 'f') {
-      Serial.println("'f'key is pressed");
-      stepper4.setSpeed(-500);
+      stepper1.setSpeed(500);
     }
 
     else if(c == '1') {
       Serial.println("'1' key is pressed");
       stepper1.setSpeed(0);
-      stepper2.setSpeed(0);
-      stepper3.setSpeed(0);
-      stepper4.setSpeed(0);
       // stepper1.runSpeed();
       // delay(500);
     }
-
-    else if (c == 't') {
-      Serial.println("'t' key is pressed");
-      servo1.write(0);
-    }
-
-    else if (c == 'g') {
-      Serial.println("'g' key is pressed");
-      servo1.write(90);
-    }
   }
-  stepper1.runSpeed(); 
-  stepper2.runSpeed();
-  stepper3.runSpeed();
-  stepper4.runSpeed();
+  stepper1.runSpeed();
 }

@@ -22,6 +22,7 @@ void loop() {
   }
 
   if(serial_data == '1') {
+    Serial.println("Hello");
     stepper.setSpeed(1000);
     stepper.moveTo(1000);
     stepper.runToPosition();
