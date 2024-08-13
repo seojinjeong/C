@@ -16,6 +16,11 @@ AccelStepper stepper2 = AccelStepper(1, step2, dir2);
 AccelStepper stepper3 = AccelStepper(1, step3, dir3);
 AccelStepper stepper4 = AccelStepper(1, step4, dir4);
 
+// const float L1 = 132.0;
+// const float L2 = 117.6;
+// const float L3 = 114.0;
+// const float L4 = 136.0;
+
 const float L1 = 10.0;
 const float L2 = 10.0;
 const float L3 = 10.0;
@@ -23,19 +28,6 @@ const float L4 = 10.0;
 
 float val = 0;
 float thetas[4] = {0, 0, 0, 0};  // Global array to store theta values
-
-int speed = 0;
-int position1 = 0;
-int position2 = 0;
-int position3 = 0;
-
-#define limit1 11
-#define limit2 10
-#define limit3 9
-
-long initial_homing1 = -1;
-long initial_homing2 = -1;
-long initial_homing3 = -1;
 
 MultiStepper steppers;
 
@@ -118,60 +110,6 @@ void setup() {
   steppers.addStepper(stepper2);
   steppers.addStepper(stepper3);
   steppers.addStepper(stepper4);
-
-  // Serial.println("Stepper is homing ..........");
-
-  // while (digitalRead(limit1)) {
-  //   stepper2.moveTo(initial_homing1);
-  //   initial_homing1++;
-  //   stepper2.run();
-  //   delay(0.2);
-  // }
-
-  // initial_homing1 = 1;
-
-  // while (!digitalRead(limit1)) {
-  //   stepper2.moveTo(initial_homing1);
-  //   stepper2.run();
-  //   initial_homing1--;
-  //   delay(0.2);
-  // }
-
-  // while (digitalRead(limit2)) {
-  //   stepper3.moveTo(initial_homing2);
-  //   initial_homing2++;
-  //   stepper3.run();
-  //   delay(0.2);
-  // }
-
-  // initial_homing2 = 1;
-
-  // while (!digitalRead(limit2)) {
-  //   stepper3.moveTo(initial_homing2);
-  //   stepper3.run();
-  //   initial_homing2--;
-  //   delay(0.2);
-  // }
-
-  // while (digitalRead(limit3)) {
-  //   stepper4.moveTo(initial_homing3);
-  //   initial_homing3--;
-  //   stepper4.run();
-  //   delay(0.2);
-  // }
-
-  // initial_homing3 = 1;
-
-  // while (!digitalRead(limit3)) {
-  //   stepper4.moveTo(initial_homing3);
-  //   stepper4.run();
-  //   initial_homing3++;
-  //   delay(0.2);
-  // }
-
-  // stepper2.setCurrentPosition(trans(-90));
-  // stepper3.setCurrentPosition(trans(-90));
-  // stepper4.setCurrentPosition(trans(-90));
 }
 
 void loop() {
@@ -184,15 +122,20 @@ void loop() {
   degrees[2] = trans(rad2deg(thetas[2]));
   degrees[3] = trans(rad2deg(thetas[3]));
 
+  
+  // for (int i = 0; i<= 3; i++) {
+  //   Serial.println(degrees[i]);
+  // }
+
   steppers.moveTo(degrees);
   steppers.runSpeedToPosition();
 
-  // Serial.print("Returned theta1: ");
-  // Serial.println(rad2deg(thetas[0]));
-  // Serial.print("Returned theta2: ");
-  // Serial.println(rad2deg(thetas[1]));
-  // Serial.print("Returned theta3: ");
-  // Serial.println(rad2deg(thetas[2]));
-  // Serial.print("Returned theta4: ");
-  // Serial.println(rad2deg(thetas[3]));
+  Serial.print("Returned theta1: ");
+  Serial.println(rad2deg(thetas[0]));
+  Serial.print("Returned theta2: ");
+  Serial.println(rad2deg(thetas[1]));
+  Serial.print("Returned theta3: ");
+  Serial.println(rad2deg(thetas[2]));
+  Serial.print("Returned theta4: ");
+  Serial.println(rad2deg(thetas[3]));
 }

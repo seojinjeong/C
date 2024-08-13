@@ -13,7 +13,7 @@ stepper.runToPosition(); //가속도를 붙혀서 스탭모터제어
 #include <AccelStepper.h>
 
 #define DIR 3
-#define STEP 4
+#define STEP 6
 
 AccelStepper stepper = AccelStepper(1, STEP, DIR);//드라이버를 쓸때는 1을쓴다!
 
