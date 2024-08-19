@@ -3,13 +3,14 @@
 #include <MultiStepper.h>
 
 const int step1 = 2;
-const int step2 = 3;
+const int step2 = 12;
 const int step3 = 4;
-const int step4 = 12;
+const int step4 = 3;
+
 const int dir1 = 5;
-const int dir2 = 6;
+const int dir2 = 13;
 const int dir3 = 7;
-const int dir4 = 13;
+const int dir4 = 6;
 
 AccelStepper stepper1 = AccelStepper(1, step1, dir1);
 AccelStepper stepper2 = AccelStepper(1, step2, dir2);
@@ -21,10 +22,10 @@ AccelStepper stepper4 = AccelStepper(1, step4, dir4);
 // const float L3 = 114.0;
 // const float L4 = 136.0;
 
-const float L1 = 10.0;
-const float L2 = 10.0;
-const float L3 = 10.0;
-const float L4 = 10.0;
+const float L1 = 132.0;
+const float L2 = 117.6;
+const float L3 = 114.0;
+const float L4 = 136;
 
 float val = 0;
 float thetas[4] = {0, 0, 0, 0};  // Global array to store theta values
@@ -115,20 +116,19 @@ void setup() {
 void loop() {
   long degrees[4];
 
-  calculate_inverse_kinematics(10, 10, 10, 0);
+  calculate_inverse_kinematics(200, 50, 100, 0);
 
   degrees[0] = trans(rad2deg(thetas[0]));
   degrees[1] = trans(rad2deg(thetas[1]));
   degrees[2] = trans(rad2deg(thetas[2]));
   degrees[3] = trans(rad2deg(thetas[3]));
 
+  // steppers.moveTo(degrees);
+  // steppers.runSpeedToPosition();
   
   // for (int i = 0; i<= 3; i++) {
   //   Serial.println(degrees[i]);
   // }
-
-  steppers.moveTo(degrees);
-  steppers.runSpeedToPosition();
 
   Serial.print("Returned theta1: ");
   Serial.println(rad2deg(thetas[0]));

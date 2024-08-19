@@ -36,7 +36,7 @@ void setupAS5600();
 float readAngle();
 
 void setup() {
-  Serial.begin(115200); // Start the serial communication
+  Serial.begin(9600); // Start the serial communication
   Wire.begin(); // Initialize I2C communication
   Wire.setClock(400000L); // Set I2C clock speed to 400kHz
 

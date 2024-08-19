@@ -96,12 +96,12 @@ void loop() {
 
     else if(c == 'w') {
       Serial.println("'w'key is pressed");
-      stepper2.setSpeed(-1500);
+      stepper2.setSpeed(1500);
     }
 
     else if(c == 's') {
       Serial.println("'s'key is pressed");
-      stepper2.setSpeed(1500);
+      stepper2.setSpeed(-1500);
     }
 
     else if(c == 'e') {
