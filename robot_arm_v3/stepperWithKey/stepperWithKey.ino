@@ -1,5 +1,5 @@
 #include <AccelStepper.h>
-#include <Servo.h>
+// #include <Servo.h>
 
 const int step1 = 2;
 const int step2 = 12;
@@ -16,23 +16,23 @@ AccelStepper stepper2 = AccelStepper(1, step2, dir2);
 AccelStepper stepper3 = AccelStepper(1, step3, dir3);
 AccelStepper stepper4 = AccelStepper(1, step4, dir4);
 
-Servo servo1;
+// Servo servo1;
 
-int pos = 0;
+// int pos = 0;
 
-int speed = 0;
+// int speed = 0;
 
 void setup() {
   Serial.begin(9600);
 
-  // pinMode(step1, OUTPUT);
-  // pinMode(step2, OUTPUT);
-  // pinMode(step3, OUTPUT);
-  // pinMode(step4, OUTPUT);
-  // pinMode(dir1, OUTPUT);
-  // pinMode(dir2, OUTPUT);
-  // pinMode(dir3, OUTPUT);
-  // pinMode(dir4, OUTPUT);
+  pinMode(step1, OUTPUT);
+  pinMode(step2, OUTPUT);
+  pinMode(step3, OUTPUT);
+  pinMode(step4, OUTPUT);
+  pinMode(dir1, OUTPUT);
+  pinMode(dir2, OUTPUT);
+  pinMode(dir3, OUTPUT);
+  pinMode(dir4, OUTPUT);
 
   // servo1.attach(2);
 
@@ -136,12 +136,12 @@ void loop() {
 
     else if (c == 't') {
       Serial.println("'t' key is pressed");
-      servo1.write(0);
+      // servo1.write(0);
     }
 
     else if (c == 'g') {
       Serial.println("'g' key is pressed");
-      servo1.write(90);
+      // servo1.write(90);
     }
   }
   stepper1.runSpeed(); 
