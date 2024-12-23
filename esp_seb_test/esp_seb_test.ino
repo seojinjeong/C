@@ -2,37 +2,48 @@
 #include <WebServer.h>
 #include <ESP32Servo.h>
 #include "HX711.h"
+#include <AccelStepper.h>
 
 // HX711 circuit wiring
 #define LOADCELL_DOUT_PIN 16
 #define LOADCELL_SCK_PIN 4
+
+// 초음파 센서 핀 정의
+#define TRIG_PIN 17
+#define ECHO_PIN 5
+
+// 스텝 모터 핀 정의
+#define IN1 14
+#define IN2 27
+#define IN3 26
+#define IN4 25
+
+// 초음파 감지 거리 (cm)
+const int DISTANCE_THRESHOLD = 10;
+
+// 스텝 모터 객체 생성 (FULL4WIRE 방식)
+AccelStepper stepper(AccelStepper::FULL4WIRE, IN1, IN3, IN2, IN4);
 
 float loadcellValue = 372;
 long baseweight;
 HX711 scale;
 
 // WiFi 설정
-const char* ssid = "MDL";
-const char* password = "19650407";
+const char* ssid = "iPhone";
+const char* password = "12080109";
 
 // 웹 서버 객체 생성 (포트 80)
-WebServer server(8080);
+WebServer server(80);
 
 // 로그인 정보 리스트
 const char* usernames[] = {"seojin", "yusang"};
 const char* passwords[] = {"seojin", "yusang"};
-int points[] = {0, 0}; // 각각의 사용자 포인트
+float points[] = {0, 0}; // 각각의 사용자 포인트
 const int num_users = 2; // 유저 수
 
 // 사용자 세션 상태
 bool loggedIn = false;
 int currentUserIndex = -1; // 현재 로그인한 사용자 인덱스
-
-int servoPin = 14;
-
-int score = 0;
-
-Servo myservo; // 서보 모터 객체
 
 // 로그인 페이지 HTML
 const char login_html[] PROGMEM = R"rawliteral(
@@ -86,16 +97,26 @@ String points_html() {
   return html;
 }
 
+long measureDistance();
+
 void setup() {
   Serial.begin(115200);
+
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+
+  // 스텝 모터 초기 설정
+  stepper.setMaxSpeed(1000);       // 최대 속도 (스텝/초)
+  stepper.setAcceleration(500);   // 가속도 (스텝/초^2)
+  stepper.setCurrentPosition(0);  // 현재 위치를 0으로 설정
+
+  Serial.println("Ultrasonic sensor with stepper motor control initialized.");
   
   // 모든 타이머 할당 허용
   ESP32PWM::allocateTimer(0);
   ESP32PWM::allocateTimer(1);
   ESP32PWM::allocateTimer(2);
   ESP32PWM::allocateTimer(3);
-
-  myservo.attach(servoPin); // 서보 모터를 핀에 연결
   
   // WiFi 연결 시작
   WiFi.begin(ssid, password);
@@ -133,12 +154,7 @@ void setup() {
       if (validLogin) {
         loggedIn = true;  // 로그인 상태 업데이트
         server.send(200, "text/html", points_html());
-        // 서보 모터를 0도에서 90도 사이로 회전 -->> 뚜껑 열림
-        for (int angle = 110; angle >= 10; angle--) {
-          myservo.write(angle);
-          delay(20); // 각도 변경 후 대기 시간
-        }
-        return;
+        //모터 회전
       }
     }
     server.send(200, "text/html", "<h1>Login Failed</h1><a href='/'>Go back</a>");
@@ -157,19 +173,31 @@ void setup() {
   server.on("/add_point", HTTP_POST, []() {
     if (loggedIn) {  // 로그인 상태 확인
       // 포인트 추가 로직
-      long currentWeight = -scale.get_units();
-      long weightChange = currentWeight - baseweight;
+      float currentWeight = -scale.get_units();
+      float weightChange = currentWeight - baseweight;
 
       baseweight = currentWeight;
 
-      delay(2000);
+      delay(500);
+      // 측정값 검증 (너무 크거나 작은 값 필터링)
+      if (currentWeight < -10000.0f || currentWeight > 10000.0f) {
+        Serial.println("Abnormal weight reading, skipping calculation.");
+        server.send(200, "text/html", points_html());
+        return;
+      }
 
       if (weightChange > 1) {
-        score = weightChange * 0.32;
+        float score = weightChange * 0.32f;
         Serial.print("Added points: ");
         Serial.println(score);
         points[currentUserIndex] += score;
         score = 0;
+      }
+
+      if (currentUserIndex < 0 || currentUserIndex >= num_users) {
+        Serial.println("Invalid user index.");
+        server.send(401, "text/html", "<h1>Unauthorized</h1>");
+        return;
       }
 
       server.send(200, "text/html", points_html());
@@ -184,11 +212,8 @@ void setup() {
     currentUserIndex = -1; // 현재 사용자 인덱스 초기화
     server.send_P(200, "text/html", login_html);
 
-    // 서보 모터를 90도에서 0도 사이로 회전 -->> 뚜껑 닫힘
-    for (int angle = 10; angle <= 110; angle++) {
-      myservo.write(angle);
-      delay(20); // 각도 변경 후 대기 시간
-    }
+    // 뚜껑 닫힘
+
   });
 
   // 웹 서버 시작
@@ -207,14 +232,49 @@ void loop() {
   // 클라이언트 요청 처리
   server.handleClient();
   
-  // WiFi 연결 상태 점검 및 재연결
-  if (WiFi.status() != WL_CONNECTED) {
-    Serial.println("WiFi disconnected, attempting to reconnect...");
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(100);
-      Serial.println("Reconnecting...");
+  long distance = measureDistance();
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // 거리 임계값 확인
+  if (distance > 0 && distance <= DISTANCE_THRESHOLD) {
+    Serial.println("Object detected! Rotating stepper motor...");
+    
+    // 스텝 모터 90도 회전 (CW)
+    stepper.moveTo(512);  // 90도 = 512 스텝 (28BYJ-48 기준)
+    while (stepper.distanceToGo() != 0) {
+      stepper.run();
     }
-    Serial.println("Reconnected to WiFi");
+    delay(8000);  // 2초 대기
+
+    // 스텝 모터 원래 위치로 복귀 (CCW)
+    stepper.moveTo(0);
+    while (stepper.distanceToGo() != 0) {
+      stepper.run();
+    }
+
+    Serial.println("Stepper motor returned to original position.");
   }
+
+  delay(500);
+}
+
+long measureDistance() {
+  // 초음파 펄스 전송
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  // ECHO 핀의 펄스 길이 측정
+  long duration = pulseIn(ECHO_PIN, HIGH, 30000);  // 타임아웃 30ms (약 5m)
+  if (duration == 0) {
+    return -1;  // 타임아웃 발생 시 -1 반환
+  }
+
+  // 거리 계산 (음속: 343 m/s)
+  long distance = duration * 0.034 / 2;  // cm 단위 거리
+  return distance;
 }

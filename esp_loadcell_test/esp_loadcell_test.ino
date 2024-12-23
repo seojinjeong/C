@@ -8,8 +8,8 @@
 HX711 scale;
 
 // 임계값 (1kg)
-const float THRESHOLD = 1.0;  // 단위: kg
-const float CALIBRATION_FACTOR = -7050;  // HX711 교정 값 (조정 필요)
+const float THRESHOLD = 5.0;  // 단위: kg
+const float CALIBRATION_FACTOR = -7050 * 58;  // HX711 교정 값 (조정 필요)
 
 // LED 핀 정의
 #define LED_PIN 2  // GPIO 2 (내장 LED)
@@ -40,7 +40,7 @@ void loop() {
 
   // 무게 출력
   Serial.print("Weight: ");
-  Serial.print(weight, 2);  // 소수점 두 자리까지 출력
+  Serial.print(weight, 4);  // 소수점 두 자리까지 출력
   Serial.println(" kg");
 
   // 임계값 비교
