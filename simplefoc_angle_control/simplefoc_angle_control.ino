@@ -59,7 +59,7 @@ void setup() {
   // default parameters in defaults.h
 
   // velocity PI controller parameters
-  motor.PID_velocity.P = 0.01f;
+  motor.PID_velocity.P = 0.1f;
   motor.PID_velocity.I = 1.5;
   motor.PID_velocity.D = 0;
   // maximal voltage to be set to the motor
@@ -70,9 +70,9 @@ void setup() {
   motor.LPF_velocity.Tf = 0.01f;
 
   // angle P controller
-  motor.P_angle.P = 10;
+  motor.P_angle.P = 20;
   // maximal velocity of the position control
-  motor.velocity_limit = 20;
+  motor.velocity_limit = 50;
   
   // comment out if not needed
   motor.useMonitoring(Serial);
