@@ -8,6 +8,7 @@
  *
  */
 #include <SimpleFOC.h>
+#include <math.h>
 
 // magnetic sensor instance - SPI
 // MagneticSensorSPI sensor = MagneticSensorSPI(AS5147_SPI, 10);
@@ -60,17 +61,18 @@ void setup() {
 
   // velocity PI controller parameters
   motor.PID_velocity.P = 0.1f;
-  motor.PID_velocity.I = 1.0;
+  motor.PID_velocity.I = 1.7;
   motor.PID_velocity.D = 0;
   // maximal voltage to be set to the motor
   motor.voltage_limit = 6;
 
   // velocity low pass filtering time constant
   // the lower the less filtered
-  motor.LPF_velocity.Tf = 0.01f;
+  motor.LPF_velocity.Tf = 0.008;
+  // motor.LPF_angle.Tf = 0.003;
 
   // angle P controller
-  motor.P_angle.P = 20;
+  motor.P_angle.P = 38;
   // maximal velocity of the position control
   motor.velocity_limit = 10;
   
@@ -104,7 +106,7 @@ void loop() {
   // velocity, position or voltage (defined in motor.controller)
   // this function can be run at much lower frequency than loopFOC() function
   // You can also use motor.move() and set the motor.target in the code
-  motor.move(target_angle);
+  motor.move(target_angle * 2 * M_PI);
 
 
   // function intended to be used with serial plotter to monitor motor variables
